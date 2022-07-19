@@ -7,7 +7,7 @@ import { FormikForm, Btn, Input } from './SearchForm.styled';
 
 export const SearchForm = ({ onSubmit }) => {
   const handleSubmit = (values, { resetForm }) => {
-    if (values.search.trim() === '') {
+    if (values.query.trim() === '') {
       return toast('Please, enter the text');
     }
     onSubmit(values);
@@ -15,13 +15,13 @@ export const SearchForm = ({ onSubmit }) => {
   };
 
   return (
-    <Formik initialValues={{ search: '' }} onSubmit={handleSubmit}>
+    <Formik initialValues={{ query: '' }} onSubmit={handleSubmit}>
       <FormikForm>
         <Btn type="submit" aria-label="search">
           <BsSearch size={22} />
         </Btn>
         <Input
-          name="search"
+          name="query"
           type="text"
           autoComplete="off"
           autoFocus

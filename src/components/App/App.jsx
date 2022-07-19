@@ -3,26 +3,23 @@ import { animateScroll } from 'react-scroll';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { searchByName } from 'api/searchImgsApi';
-import { SearchBar, ImageGallery, Button, Loader, Modal } from 'components';
+import { SearchBar, ImageGallery, Button, Loader } from 'components';
 
 export const App = () => {
   const [images, setImages] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-
-  const [showLoader, setShowLoader] = useState(false);
-  const [showLoadMore, setShowLoadMore] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [activeImgIdx, setActiveImgIdx] = useState(null);
   const [error, setError] = useState(null);
+  const [endContent, setEndContent] = useState(true);
+
+  const [status, setStatus] = useState('idle');
 
   useEffect(() => {
     if (search === '') {
       return;
     }
 
-    setShowLoadMore(false);
-    setShowLoader(true);
+    setStatus('pending');
 
     async function fetchImages() {
       try {
@@ -38,57 +35,63 @@ export const App = () => {
         }
 
         const isEnd = page < Math.ceil(totalHits / per_page);
-
+        setEndContent(isEnd);
         setImages(s => [...s, ...hits]);
-        setShowLoadMore(isEnd);
+
+        setStatus('resolved');
 
         animateScroll.scrollToBottom();
       } catch (error) {
         setError(error);
-      } finally {
-        setShowLoader(false);
+        setStatus('rejected');
       }
     }
     fetchImages();
   }, [search, page]);
 
-  const handleSearchChange = ({ search }) => {
+  const handleSearchChange = ({ query }) => {
+    if (query === search) {
+      return toast('You’re already watching this');
+    }
     setImages([]);
-    setSearch(search.trim());
+    setSearch(query.trim());
     setPage(1);
   };
 
-  const setActiveIndex = activeImgIdx => {
-    setActiveImgIdx(activeImgIdx);
-  };
+  if (status === 'idle') {
+    return <SearchBar onSubmit={handleSearchChange} />;
+  }
 
-  return (
-    <>
-      <SearchBar onSubmit={handleSearchChange} />
-      {error && (
+  if (status === 'pending') {
+    return (
+      <>
+        <SearchBar onSubmit={handleSearchChange} />
+        <ImageGallery images={images} />
+        <Loader />
+      </>
+    );
+  }
+
+  if (status === 'rejected') {
+    return (
+      <>
+        <SearchBar onSubmit={handleSearchChange} />
         <p style={{ textAlign: 'center', fontSize: '30px' }}>{error.message}</p>
-      )}
-      {images.length > 0 && (
-        <ImageGallery
-          images={images}
-          activeIndex={setActiveIndex}
-          toggleModal={() => setShowModal(s => !s)}
-        />
-      )}
-      {showLoader && <Loader />}
-      {showLoadMore && (
-        <Button type="button" onClick={() => setPage(s => s + 1)}>
-          Load more
-        </Button>
-      )}
-      {showModal && (
-        <Modal toggleModal={() => setShowModal(s => !s)}>
-          <img
-            src={images[activeImgIdx].largeImageURL}
-            alt={images[activeImgIdx].tags}
-          />
-        </Modal>
-      )}
-    </>
-  );
+      </>
+    );
+  }
+
+  if (status === 'resolved') {
+    return (
+      <>
+        <SearchBar onSubmit={handleSearchChange} />
+        <ImageGallery images={images} />
+        {endContent && (
+          <Button type="button" onClick={() => setPage(s => s + 1)}>
+            Load more
+          </Button>
+        )}
+      </>
+    );
+  }
 };

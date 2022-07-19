@@ -2,18 +2,16 @@ import PropTypes from 'prop-types';
 import { ImageGalleryItem } from 'components';
 import { Gallery } from './ImageGallery.styled';
 
-export const ImageGallery = ({ images, activeIndex, toggleModal }) => {
+export const ImageGallery = ({ images }) => {
   return (
     <Gallery>
-      {images.map(({ id, tags, webformatURL }, idx) => {
+      {images.map(({ id, tags, webformatURL, largeImageURL }) => {
         return (
           <ImageGalleryItem
             key={id}
-            idx={idx}
             tags={tags}
-            activeIndex={activeIndex}
-            toggleModal={toggleModal}
             smallImage={webformatURL}
+            bigImage={largeImageURL}
           />
         );
       })}
@@ -23,6 +21,4 @@ export const ImageGallery = ({ images, activeIndex, toggleModal }) => {
 
 ImageGallery.propTypes = {
   images: PropTypes.array.isRequired,
-  activeIndex: PropTypes.func.isRequired,
-  toggleModal: PropTypes.func.isRequired,
 };
