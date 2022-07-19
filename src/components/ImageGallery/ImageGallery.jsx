@@ -9,8 +9,9 @@ export const ImageGallery = ({ images, activeIndex, toggleModal }) => {
         return (
           <ImageGalleryItem
             key={id}
+            idx={idx}
             tags={tags}
-            activeIndex={() => activeIndex(idx)}
+            activeIndex={activeIndex}
             toggleModal={toggleModal}
             smallImage={webformatURL}
           />

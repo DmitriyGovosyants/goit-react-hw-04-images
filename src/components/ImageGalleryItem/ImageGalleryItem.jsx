@@ -6,6 +6,7 @@ export const ImageGalleryItem = ({
   toggleModal,
   tags,
   activeIndex,
+  idx,
 }) => {
   return (
     <GalleryItem>
@@ -14,7 +15,7 @@ export const ImageGalleryItem = ({
         alt={tags}
         onClick={() => {
           toggleModal();
-          activeIndex();
+          activeIndex(idx);
         }}
       />
     </GalleryItem>
