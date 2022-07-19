@@ -46,7 +46,7 @@ export const App = () => {
       }
     }
     fetchImages();
-  }, [search, page]);
+  }, [page, search]);
 
   const handleSearchChange = ({ query }) => {
     if (query === search) {
