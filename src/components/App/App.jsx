@@ -10,8 +10,8 @@ export const App = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [error, setError] = useState(null);
-  const [endContent, setEndContent] = useState(true);
 
+  const [endContent, setEndContent] = useState(true);
   const [status, setStatus] = useState('idle');
 
   useEffect(() => {
@@ -36,10 +36,9 @@ export const App = () => {
 
         const isEnd = page < Math.ceil(totalHits / per_page);
         setEndContent(isEnd);
+
         setImages(s => [...s, ...hits]);
-
         setStatus('resolved');
-
         animateScroll.scrollToBottom();
       } catch (error) {
         setError(error);
